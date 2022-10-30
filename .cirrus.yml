@@ -59,6 +59,11 @@ task:
     # - ./dev/bots/accept_android_sdk_licenses.sh
     - date
 
+  build_script:
+    - date
+    - flutter build macos
+    - date
+
   # always:
   #   report_artifacts:
   #     path: report.json
