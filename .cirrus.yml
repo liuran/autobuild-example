@@ -61,7 +61,7 @@ task:
 
   build_script:
     - date
-    - flutter build macos
+    - flutter build macos --release
     - date
 
   flutter_artifacts:
