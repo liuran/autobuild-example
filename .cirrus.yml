@@ -1,10 +1,10 @@
 # use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
 use_compute_credits: "false"
 
-container:
-  image: ghcr.io/cirruslabs/macos-monterey-xcode:latest
-  cpu: $CPU
-  memory: $MEMORY
+macos_instance:
+  image: ghcr.io/cirruslabs/macos-monterey-base:latest
+  # cpu: $CPU
+  # memory: $MEMORY
 
 environment:
   # For details about environment variables used in Cirrus, including how encrypted variables work,
@@ -22,8 +22,8 @@ environment:
   # TODO(amirha): remove once we've migrated to newer Gradle
   CIRRUS_CHANGE_MESSAGE: ""
   CIRRUS_COMMIT_MESSAGE: ""
-  CPU: "2" # 0.1-8 without compute credits, 0.1-30 with (yes, you can go fractional)
-  MEMORY: 4G # 256M-24G without compute credits, 256M-90G with
+  # CPU: "2" # 0.1-8 without compute credits, 0.1-30 with (yes, you can go fractional)
+  # MEMORY: 4G # 256M-24G without compute credits, 256M-90G with
 
 # macos_instance:
 
