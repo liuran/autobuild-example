@@ -64,6 +64,9 @@ task:
     - flutter build macos
     - date
 
+  flutter_artifacts:
+    path: build/macos/Build/Products/Release/*.app
+
   # always:
   #   report_artifacts:
   #     path: report.json
