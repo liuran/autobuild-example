@@ -44,7 +44,7 @@ task:
 
   pub_cache:
     folder: ~/.pub-cache
-    fingerprint_script: echo $OS; grep -r --include=pubspec.yaml 'PUBSPEC CHECKSUM' # "$CIRRUS_WORKING_DIR"
+    fingerprint_script: cat pubspec.yaml
 
   # test_script: flutter test -machine > report.json
 
