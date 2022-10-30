@@ -1,6 +1,11 @@
 # use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
 use_compute_credits: "false"
 
+container:
+  image: ghcr.io/cirruslabs/macos-monterey-xcode:latest
+  cpu: $CPU
+  memory: $MEMORY
+
 environment:
   # For details about environment variables used in Cirrus, including how encrypted variables work,
   # see https://cirrus-ci.org/guide/writing-tasks/#environment-variables
@@ -17,27 +22,25 @@ environment:
   # TODO(amirha): remove once we've migrated to newer Gradle
   CIRRUS_CHANGE_MESSAGE: ""
   CIRRUS_COMMIT_MESSAGE: ""
+  CPU: "2" # 0.1-8 without compute credits, 0.1-30 with (yes, you can go fractional)
+  MEMORY: 4G # 256M-24G without compute credits, 256M-90G with
 
 # macos_instance:
 
 task:
-  container:
-    # image: gcr.io/flutter-cirrus/build-flutter-image:latest
-    image: ghcr.io/cirruslabs/macos-monterey-xcode:latest
-    cpu: $CPU
-    memory: $MEMORY
+  # container:
+  #   # image: gcr.io/flutter-cirrus/build-flutter-image:latest
 
-  environment:
-    # We shrink our default resource requirement as much as possible because that way we are more
-    # likely to get scheduled. We require 4G of RAM because most of the shards (all but one as of
-    # October 2019) just get OOM-killed with less. Some shards may need more. When increasing the
-    # requirements for select shards, please leave a comment on those shards saying when you
-    # increased the requirements, what numbers you tried, and what the results were.
-    CPU: "2" # 0.1-8 without compute credits, 0.1-30 with (yes, you can go fractional)
-    MEMORY: 4G # 256M-24G without compute credits, 256M-90G with
-    # CIRRUS_WORKING_DIR: "/tmp/$FLUTTER_SDK_PATH_WITH_SPACE"
-    # PATH: "$CIRRUS_WORKING_DIR/bin:$CIRRUS_WORKING_DIR/bin/cache/dart-sdk/bin:$PATH"
-    # ANDROID_SDK_ROOT: "/opt/android_sdk"
+  # environment:
+  # We shrink our default resource requirement as much as possible because that way we are more
+  # likely to get scheduled. We require 4G of RAM because most of the shards (all but one as of
+  # October 2019) just get OOM-killed with less. Some shards may need more. When increasing the
+  # requirements for select shards, please leave a comment on those shards saying when you
+  # increased the requirements, what numbers you tried, and what the results were.
+
+  # CIRRUS_WORKING_DIR: "/tmp/$FLUTTER_SDK_PATH_WITH_SPACE"
+  # PATH: "$CIRRUS_WORKING_DIR/bin:$CIRRUS_WORKING_DIR/bin/cache/dart-sdk/bin:$PATH"
+  # ANDROID_SDK_ROOT: "/opt/android_sdk"
 
   pub_cache:
     folder: ~/.pub-cache
