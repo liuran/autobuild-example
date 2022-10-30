@@ -1,11 +1,61 @@
-macos_instance:
-  image: ghcr.io/cirruslabs/macos-monterey-xcode:latest
+use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
 
-test_task:
+environment:
+  # For details about environment variables used in Cirrus, including how encrypted variables work,
+  # see https://cirrus-ci.org/guide/writing-tasks/#environment-variables
+  # GCLOUD_SERVICE_ACCOUNT_KEY: ENCRYPTED[f12abe60f5045d619ef4c79b83dd1e0722a0b0b13dbea95fbe334e2db7fffbcd841a5a92da8824848b539a19afe0c9fb]
+  # We change Flutter's directory to include a space in its name (see $CIRRUS_WORKING_DIR) so that
+  # we constantly test path names with spaces in them. The FLUTTER_SDK_PATH_WITH_SPACE variable must
+  # therefore have a space in it.
+  FLUTTER_SDK_PATH_WITH_SPACE: "flutter sdk"
+  # We force BOT to true so that all our tools know we're in a CI environment. This avoids any
+  # dependency on precisely how Cirrus is detected by our tools.
+  BOT: "true"
+  # Unsetting CIRRUS_CHANGE_MESSAGE and CIRRUS_COMMIT_MESSAGE as they might include non-ASCII
+  # characters which makes Gradle crash. See: https://github.com/flutter/flutter/issues/24935
+  # TODO(amirha): remove once we've migrated to newer Gradle
+  CIRRUS_CHANGE_MESSAGE: ""
+  CIRRUS_COMMIT_MESSAGE: ""
+
+# macos_instance:
+
+task:
+  container:
+    # image: gcr.io/flutter-cirrus/build-flutter-image:latest
+    image: ghcr.io/cirruslabs/macos-monterey-xcode:latest
+    cpu: $CPU
+    memory: $MEMORY
+
+  environment:
+    # We shrink our default resource requirement as much as possible because that way we are more
+    # likely to get scheduled. We require 4G of RAM because most of the shards (all but one as of
+    # October 2019) just get OOM-killed with less. Some shards may need more. When increasing the
+    # requirements for select shards, please leave a comment on those shards saying when you
+    # increased the requirements, what numbers you tried, and what the results were.
+    CPU: 2 # 0.1-8 without compute credits, 0.1-30 with (yes, you can go fractional)
+    MEMORY: 8G # 256M-24G without compute credits, 256M-90G with
+    # CIRRUS_WORKING_DIR: "/tmp/$FLUTTER_SDK_PATH_WITH_SPACE"
+    # PATH: "$CIRRUS_WORKING_DIR/bin:$CIRRUS_WORKING_DIR/bin/cache/dart-sdk/bin:$PATH"
+    # ANDROID_SDK_ROOT: "/opt/android_sdk"
+
   pub_cache:
     folder: ~/.pub-cache
-  test_script: flutter test > report.json
-  always:
-    report_artifacts:
-      path: report.json
-      format: flutter
+    fingerprint_script: echo $OS; grep -r --include=pubspec.yaml 'PUBSPEC CHECKSUM' # "$CIRRUS_WORKING_DIR"
+
+  # test_script: flutter test -machine > report.json
+
+  setup_script:
+    - date
+    # - git clean -xffd
+    # - git fetch origin
+    # - git fetch origin master # To set FETCH_HEAD, so that "git merge-base" works.
+    - flutter config --no-analytics
+    - flutter doctor -v
+    - flutter update-packages
+    # - ./dev/bots/accept_android_sdk_licenses.sh
+    - date
+
+  # always:
+  #   report_artifacts:
+  #     path: report.json
+  #     format: flutter
