@@ -1,4 +1,4 @@
-use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
+# use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
 
 environment:
   # For details about environment variables used in Cirrus, including how encrypted variables work,
