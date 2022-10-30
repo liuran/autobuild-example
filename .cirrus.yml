@@ -26,7 +26,8 @@ task:
     image: ghcr.io/cirruslabs/macos-monterey-xcode:latest
     cpu: $CPU
     memory: $MEMORY
-  # environment:
+
+  environment:
   # We shrink our default resource requirement as much as possible because that way we are more
   # likely to get scheduled. We require 4G of RAM because most of the shards (all but one as of
   # October 2019) just get OOM-killed with less. Some shards may need more. When increasing the
